@@ -9,10 +9,22 @@ export const openpixProvider: PaymentProviderAdapter = {
   name: 'openpix',
 
   async createPayment(input: CreatePaymentInput): Promise<PaymentResult> {
+    if (!process.env.OPENPIX_APP_ID) {
+      // Sandbox / Demonstração se chave de API não configurada
+      return {
+        providerPaymentId: `demo_pix_${input.orderId}_${Date.now()}`,
+        providerReference: `txid_${input.orderId}`,
+        status: 'pending',
+        qrCode: `00020126580014br.gov.bcb.pix0136demo-chave-pix-template520400005303986540${(input.amountCents / 100).toFixed(2)}5802BR5913Loja Template6009SAO PAULO62070503***6304E2CA`,
+        expiresAt: new Date(Date.now() + 15 * 60 * 1000),
+        raw: { demo: true, message: 'Sandbox mode. Configure OPENPIX_APP_ID for live charges.' },
+      };
+    }
+
     const res = await fetch(`${BASE}/charge`, {
       method: 'POST',
       headers: {
-        Authorization: process.env.OPENPIX_APP_ID!,
+        Authorization: process.env.OPENPIX_APP_ID,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
