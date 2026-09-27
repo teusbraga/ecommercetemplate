@@ -1,0 +1,44 @@
+.
+├── src/
+│   ├── app/
+│   │   ├── (shop)/
+│   │   │   ├── layout.tsx
+│   │   │   ├── page.tsx                 # home
+│   │   │   ├── products/page.tsx
+│   │   │   ├── products/[slug]/page.tsx
+│   │   │   ├── cart/page.tsx
+│   │   │   └── checkout/page.tsx
+│   │   ├── (admin)/
+│   │   │   ├── layout.tsx               # guarda: is_admin()
+│   │   │   └── admin/
+│   │   │       ├── page.tsx             # dashboard
+│   │   │       ├── products/page.tsx
+│   │   │       ├── orders/page.tsx
+│   │   │       ├── inventory/page.tsx
+│   │   │       └── cash/page.tsx
+│   │   └── api/
+│   │       └── webhooks/[provider]/route.ts
+│   ├── components/
+│   │   ├── ui/
+│   │   │   ├── Modal.tsx
+│   │   │   ├── Button.tsx
+│   │   │   ├── Input.tsx
+│   │   │   └── Table.tsx
+│   │   └── shop/
+│   │       ├── ProductCard.tsx
+│   │       ├── ProductModal.tsx
+│   │       └── CartDrawer.tsx
+│   ├── lib/
+│   │   ├── supabase/{client.ts,server.ts}
+│   │   ├── payments/  (já vimos)
+│   │   ├── inventory.ts
+│   │   ├── cash.ts
+│   │   └── audit.ts
+│   └── types/database.ts
+├── supabase/migrations/
+├── tests/
+│   ├── e2e/           # Playwright
+│   └── selenium/      # Selenium (Python ou Node)
+├── playwright.config.ts
+├── .env.local
+└── package.json
