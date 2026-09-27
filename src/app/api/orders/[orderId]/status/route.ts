@@ -9,6 +9,16 @@ export async function GET(
     const { orderId } = await params;
     const supabase = createServiceClient();
 
+    if (orderId.startsWith('demo_ord_')) {
+      return NextResponse.json({
+        orderId,
+        orderNumber: 1234,
+        status: 'pending',
+        paymentStatus: 'pending',
+        paidAt: null,
+      });
+    }
+
     const { data: order, error } = await supabase
       .from('orders')
       .select('id, order_number, status, total_cents')

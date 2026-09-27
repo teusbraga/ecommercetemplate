@@ -11,6 +11,15 @@ export async function POST(
     const { id: orderId } = await params;
     const supabase = createServiceClient();
 
+    if (orderId.startsWith('demo_ord_')) {
+      return NextResponse.json({
+        verified: true,
+        mode: 'sandbox',
+        status: 'pending',
+        message: 'Modo demonstração/sandbox: pagamento simulado.',
+      });
+    }
+
     // 1. Busca pedido e pagamento correspondente
     const { data: order, error: orderErr } = await supabase
       .from('orders')
