@@ -1,11 +1,54 @@
 'use client';
 
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { CartProvider, useCart } from '@/lib/cart';
+import { createClient } from '@/lib/supabase/client';
 
 function ShopHeader() {
   const { totalItems } = useCart();
+  const [user, setUser] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+
+    const checkUser = async () => {
+      try {
+        const {
+          data: { user: currentUser },
+        } = await supabase.auth.getUser();
+
+        setUser(currentUser);
+
+        if (currentUser) {
+          const { data: prof } = await supabase
+            .from('profiles')
+            .select('role, full_name')
+            .eq('id', currentUser.id)
+            .single();
+
+          setProfile(prof);
+        } else {
+          setProfile(null);
+        }
+      } catch (e) {
+        // Ignora caso erro de rede ou não autenticado
+      }
+    };
+
+    checkUser();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(() => {
+      checkUser();
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
+  const isAdminOrStaff = profile?.role === 'admin' || profile?.role === 'staff' || profile?.role === 'auditor';
 
   return (
     <header
@@ -43,7 +86,7 @@ function ShopHeader() {
             🛒 <span>Loja Base</span>
           </Link>
 
-          <nav style={{ display: 'flex', gap: 16 }}>
+          <nav style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
             <Link
               href="/products"
               data-testid="nav-products"
@@ -56,22 +99,63 @@ function ShopHeader() {
             >
               Produtos
             </Link>
-            <Link
-              href="/admin"
-              data-testid="nav-admin"
-              style={{
-                fontSize: 14,
-                color: '#71717a',
-                textDecoration: 'none',
-                fontWeight: 500,
-              }}
-            >
-              Admin
-            </Link>
+
+            {isAdminOrStaff && (
+              <Link
+                href="/admin"
+                data-testid="nav-admin"
+                style={{
+                  fontSize: 14,
+                  color: '#0070f3',
+                  textDecoration: 'none',
+                  fontWeight: 600,
+                  backgroundColor: '#eff6ff',
+                  padding: '4px 10px',
+                  borderRadius: 6,
+                }}
+              >
+                ⚙️ Painel Admin
+              </Link>
+            )}
           </nav>
         </div>
 
-        <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          {/* Link Conta / Login */}
+          {user ? (
+            <Link
+              href="/account"
+              style={{
+                fontSize: 14,
+                color: '#18181b',
+                textDecoration: 'none',
+                fontWeight: 500,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '8px 12px',
+                borderRadius: 6,
+              }}
+            >
+              <span>👤</span>
+              <span>{profile?.full_name?.split(' ')[0] || 'Minha Conta'}</span>
+            </Link>
+          ) : (
+            <Link
+              href="/login"
+              style={{
+                fontSize: 14,
+                color: '#52525b',
+                textDecoration: 'none',
+                fontWeight: 500,
+                padding: '8px 12px',
+              }}
+            >
+              Entrar
+            </Link>
+          )}
+
+          {/* Carrinho */}
           <Link
             href="/cart"
             data-testid="cart-link"

@@ -13,6 +13,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     { href: '/admin/orders', label: '📑 Pedidos' },
     { href: '/admin/inventory', label: '📈 Estoque' },
     { href: '/admin/cash', label: '💰 Caixa' },
+    { href: '/admin/users', label: '👥 Usuários' },
   ];
 
   return (
