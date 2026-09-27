@@ -3,8 +3,12 @@ import { Builder, By, until } from 'selenium-webdriver';
 import chrome from 'selenium-webdriver/chrome';
 
 (async () => {
-  const driver = await new Builder().forBrowser('chrome')
-    .setChromeOptions(new chrome.Options().addArguments('--headless=new'))
+  const options = new chrome.Options();
+  options.addArguments('--headless=new');
+
+  const driver = await new Builder()
+    .forBrowser('chrome')
+    .setChromeOptions(options)
     .build();
   try {
     await driver.get('http://localhost:3000/products');
