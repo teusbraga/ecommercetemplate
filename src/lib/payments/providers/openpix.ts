@@ -1,3 +1,4 @@
+import { createHmac, timingSafeEqual } from 'crypto';
 import type {
   PaymentProviderAdapter, CreatePaymentInput, PaymentResult, WebhookEvent,
 } from '../types';
@@ -54,11 +55,16 @@ export const openpixProvider: PaymentProviderAdapter = {
   },
 
   verifyWebhook(rawBody, headers) {
-    // OpenPix assina com HMAC SHA1 no header 'x-webhook-signature'
     const signature = headers['x-webhook-signature'];
-    if (!signature) return false;
-    // Implementar HMAC e comparar — deixei stub para completar
-    return true;
+    if (!signature || !process.env.OPENPIX_WEBHOOK_SECRET) return false;
+    const expected = createHmac('sha1', process.env.OPENPIX_WEBHOOK_SECRET)
+      .update(rawBody)
+      .digest('hex');
+    try {
+      return timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
+    } catch {
+      return false;
+    }
   },
 
   parseWebhook(rawBody): WebhookEvent {

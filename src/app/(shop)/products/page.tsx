@@ -12,7 +12,10 @@ export default function ProductsPage() {
   useEffect(() => {
     const supabase = createClient();
     supabase.from('products').select('id,name,slug,price_cents').eq('is_active', true)
-      .then(({ data }) => setProducts(data ?? []));
+      .then(({ data, error }) => {
+        if (error) console.error('Erro ao buscar produtos:', error);
+        setProducts(data ?? []);
+      });
   }, []);
 
   return (

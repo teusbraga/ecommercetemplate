@@ -13,7 +13,7 @@ export function Modal({
   if (!open) return null;
   return (
     <div
-      role="dialog" aria-modal="true" data-testid={testId ?? 'modal'}
+      role="dialog" aria-modal="true" aria-labelledby="modal-title" data-testid={testId ?? 'modal'}
       style={{
         position: 'fixed', inset: 0, background: 'rgba(0,0,0,.5)',
         display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50,
@@ -25,7 +25,7 @@ export function Modal({
         style={{ background: '#fff', padding: 24, borderRadius: 8, minWidth: 320, maxWidth: 560 }}
       >
         <header style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
-          <h2 style={{ margin: 0, fontSize: 18 }}>{title}</h2>
+          <h2 id="modal-title" style={{ margin: 0, fontSize: 18 }}>{title}</h2>
           <button onClick={onClose} data-testid="modal-close" aria-label="Fechar">✕</button>
         </header>
         <div>{children}</div>
