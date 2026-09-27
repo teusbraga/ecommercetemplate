@@ -232,6 +232,36 @@ export default function AdminOrderDetailPage({
                     Pago em: {new Date(p.paid_at).toLocaleString('pt-BR')}
                   </p>
                 )}
+                <div style={{ marginTop: 10 }}>
+                  <button
+                    onClick={async () => {
+                      try {
+                        const res = await fetch(`/api/admin/orders/${order.id}/verify`, { method: 'POST' });
+                        const data = await res.json();
+                        if (data.fraudDetected) {
+                          alert(`⚠️ ${data.message}`);
+                          await loadOrder();
+                        } else {
+                          alert(`✓ Conciliação Bancária: ${data.message || 'Status validado com a instituição!'}`);
+                        }
+                      } catch (err: any) {
+                        alert(`Erro na verificação: ${err.message}`);
+                      }
+                    }}
+                    style={{
+                      padding: '5px 10px',
+                      fontSize: 12,
+                      backgroundColor: '#eff6ff',
+                      color: '#1d4ed8',
+                      border: '1px solid #bfdbfe',
+                      borderRadius: 6,
+                      cursor: 'pointer',
+                      fontWeight: 600,
+                    }}
+                  >
+                    🛡️ Auditar com o Banco (Double-Check)
+                  </button>
+                </div>
               </div>
             ))
           ) : (
